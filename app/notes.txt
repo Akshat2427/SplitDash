@@ -1,0 +1,8 @@
+src/
+├── components/       # Reusable UI components
+├── screens/          # Screens for navigation
+├── assets/           # Images, animations (like Lottie)
+├── api/              # API utility functions
+├── navigation/       # Navigation setup
+├── styles/           # Common styles
+└── store/            # Redux (if applicable)

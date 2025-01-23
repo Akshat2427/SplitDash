@@ -1,0 +1,1 @@
+Idea Behind Calendar is that user will add events in my calendar and then at a certain day we take out events from each day and ,ark them in database.
