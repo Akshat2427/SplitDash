@@ -24,6 +24,8 @@ function AddData(props: Props) {
         'Personal',
         'Accommodation',
         'Miscellaneous',
+        'Lent',
+        'Borrowed',
     ];
 
     const handleCategoryClick = (category: string) => {
@@ -76,7 +78,7 @@ function AddData(props: Props) {
 
     return (
         <>
-            <div className="bg-black h-screen w-[13vw] fixed">
+            <div className=" h-screen w-[13vw] fixed">
                 <Aside />
             </div>
             <div className="w-[85vw] ml-[13vw] p-8 bg-gray-100 h-screen overflow-y-auto">
@@ -157,7 +159,6 @@ function AddData(props: Props) {
                                 />
                             </div>
                             <div>
-                                {/* <h2 className="text-lg font-medium text-gray-700 mb-2">Popular Categories</h2> */}
                                 <div className="flex flex-wrap gap-3">
                                     {categories.map((category) => (
                                         <span
@@ -166,6 +167,10 @@ function AddData(props: Props) {
                                             className={`cursor-pointer px-3 py-1 rounded-full text-sm font-medium ${
                                                 selectedCategory === category
                                                     ? 'bg-indigo-600 text-white'
+                                                    : category === 'Lent'
+                                                    ? 'bg-green-100 text-green-700 hover:bg-green-200'
+                                                    : category === 'Borrowed'
+                                                    ? 'bg-red-100 text-red-700 hover:bg-red-200'
                                                     : 'bg-indigo-100 text-indigo-700 hover:bg-indigo-200'
                                             }`}
                                         >

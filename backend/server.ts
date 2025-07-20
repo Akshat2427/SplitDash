@@ -4,7 +4,6 @@ import cors from 'cors';
 const port = 8080;
 import auth from './routes/auth';
 import expense from './routes/expense';
-
 import dotenv from "dotenv";
 import mongoose from 'mongoose';
 import { Expense } from './models/expenses';

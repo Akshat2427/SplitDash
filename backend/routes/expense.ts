@@ -1,6 +1,7 @@
 import { Router, Request, Response } from "express";
 import mongoose from "mongoose";
 import { Expense } from "../models/expenses";
+import exp from "constants";
 
 const router = Router();
 
@@ -47,22 +48,47 @@ router.post("/add-expenses", async (req, res) => {
     // Update existing or add new expense for the date.
     if (expenseIndex !== -1) {
       expense.expenses[expenseIndex].details.push({
-        item,
-        category,
-        description,
-        amount: parsedAmount,
+      item,
+      category,
+      description,
+      amount: parsedAmount,
       });
       expense.expenses[expenseIndex].amount += parsedAmount;
     } else {
       expense.expenses.unshift({
-        date,
-        amount: parsedAmount,
-        details: [{ item, category, description, amount: parsedAmount }],
+      date,
+      amount: parsedAmount,
+      details: [{ item, category, description, amount: parsedAmount }],
       });
     }
 
     // Ensure the current year exists in the graph.
     const currentYear = new Date().getFullYear();
+
+    // Update category-specific arrays (e.g., "lend" or "borrow").
+if (category === "Lent") {
+  if (!expense.lend) {
+    expense.lend = [];
+  }
+  expense.lend.push({
+    date: new Date(date).toISOString(), // Ensure date is in ISO string format
+    amount: parsedAmount,
+    person: item, // Assuming `item` represents the person
+    description: description || "", // Default to empty string if description is missing
+  });
+}
+
+if (category === "Borrowed") {
+  if (!expense.debt) {
+    expense.debt = [];
+  }
+  expense.debt.push({
+    date: new Date(date).toISOString(), // Ensure date is in ISO string format
+    amount: parsedAmount,
+    person: item, // Assuming `item` represents the person
+    description: description || "", // Default to empty string if description is missing
+  });
+}
     let yearEntry = expense.graph.find((entry) => entry.year === currentYear);
 
     if (!yearEntry) {
@@ -95,30 +121,26 @@ router.post("/add-expenses", async (req, res) => {
     res.status(500).json({ message: "Internal server error", error });
   }
 });
-
 router.get("/update-data/:expenseID", async (req, res) => {
-    try {
-      console.log("Expense ID:", req.params.expenseID);
-  
-      let { expenseID } = req.params;
-        expenseID = "#" + expenseID;
-      
+  try {
+    console.log("Expense ID:", req.params.expenseID);
+
+    let { expenseID } = req.params;
+    expenseID = "#" + expenseID;
+
     if (!expenseID) {
       return res.status(400).json({ error: "Expense ID is required" });
     }
 
-   
     const expense = await Expense.findOne({ expenseID });
     if (!expense) {
       return res.status(404).json({ error: "Expense not found" });
     }
 
-   
     const currentYear = new Date().getFullYear();
     const yearExists = expense.graph.some((entry) => entry.year === currentYear);
 
     if (!yearExists) {
-    
       const newYearEntry = {
         year: currentYear,
         month: Array.from({ length: 12 }, (_, i) => ({
@@ -140,3 +162,36 @@ router.get("/update-data/:expenseID", async (req, res) => {
 });
 
 export default router;
+
+export interface Expense {
+  expenseID: string;
+  expenses: {
+    date: string;
+    amount: number;
+    details: {
+      item: string;
+      category: string;
+      description?: string;
+      amount: number;
+    }[];
+  }[];
+  graph: {
+    year: number;
+    month: {
+      name: string;
+      amount: number;
+    }[];
+  }[];
+  lend?: {
+    date: string;
+    amount: number;
+    person: string;
+    description: string;
+  }[];
+  debt?: {
+    date: string;
+    amount: number;
+    person: string;
+    description: string;
+  }[];
+}

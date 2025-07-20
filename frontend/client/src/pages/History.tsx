@@ -39,7 +39,7 @@ const History: React.FC<Props> = () => {
   return (
     <>
       {/* Sidebar */}
-      <div className="bg-black h-screen w-[13vw] fixed">
+      <div className=" h-screen w-[13vw] fixed">
         <Aside />
       </div>
 

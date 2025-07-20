@@ -14,6 +14,7 @@ const initialState: {
   lendedAmount: number;
   annualAmount: number;
   monthlyAmount: number;
+  previousMonthAmount: number;
   monthHighest: [string , string , number];
 } = {
   expenseID: "",
@@ -25,6 +26,7 @@ const initialState: {
   lendedAmount: 0,
   annualAmount: 0,
   monthlyAmount: 0,
+  previousMonthAmount: 0,
   monthHighest: ["","", 0],
 };
 
@@ -54,6 +56,12 @@ export const ExpenseSlice = createSlice({
       state.monthlyAmount = state.expenses.slice(0, 31).reduce((total: number, e: any) => {
         const expenseDate = new Date(e.date);
         return expenseDate.getMonth() === today.getMonth() && expenseDate.getFullYear() === today.getFullYear()
+          ? total + e.amount
+          : total;
+      }, 0);
+      state.previousMonthAmount = state.expenses.slice(0, 31).reduce((total: number, e: any) => {
+        const expenseDate = new Date(e.date);
+        return expenseDate.getMonth() === today.getMonth() - 1 && expenseDate.getFullYear() === today.getFullYear()
           ? total + e.amount
           : total;
       }, 0);

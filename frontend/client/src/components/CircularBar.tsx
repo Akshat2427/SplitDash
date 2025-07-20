@@ -44,8 +44,10 @@ interface CircularProgressProps {
         </svg>
         {/* Text Inside Circle */}
         <div className="absolute text-center">
-          <p className="text-lg font-bold" style={{ color }}>{`${percentage}%`}</p>
-          <p className="text-sm font-semibold text-gray-700">Amount: {amount}</p>
+            <p className="text-lg font-bold" style={{ color }}>{`${isNaN(percentage) ? 0 : !isFinite(percentage) ? 100 : percentage}%`}</p>
+            <p className="text-sm font-semibold text-gray-700">
+            Amount: {isNaN(amount) ? 0 : !isFinite(amount) ? 100 : amount}
+            </p>
         </div>
       </div>
     );

@@ -9,6 +9,7 @@ import Profile from './pages/Profile';
 import Reminder from './pages/Reminder';
 import AddData from './components/AddData';
 import History from './pages/History';
+import Partner from './pages/Partner'; // Import the Partner page
 
 const App: React.FC = () => { 
   const user = useSelector((state: any) => state.user);
@@ -21,25 +22,18 @@ const App: React.FC = () => {
   return (
     <div>
       <Routes>
-       
         <Route 
           path="/register" 
           element={!user?.isLogin ? <Login /> : <Navigate to="/dashboard" />} 
         />
-        
-       
         <Route 
           path="/" 
           element={!user?.isLogin ? <MainLayout /> : <Navigate to="/dashboard" />} 
         />
-        
-      
         <Route 
           path="/dashboard" 
           element={user?.isLogin ? <Dashboard /> : <Navigate to="/register" />} 
         />
-        
-      
         <Route 
           path="/profile" 
           element={user?.isLogin ? <Profile /> : <Navigate to="/register" />} 
@@ -56,8 +50,11 @@ const App: React.FC = () => {
           path="/history" 
           element={user?.isLogin && expense?.expenseID !== '' ? <History /> : <Navigate to="/register" />} 
         />
+        <Route 
+          path="/partner" 
+          element={user?.isLogin ? <Partner /> : <Navigate to="/register" />} 
+        />
       </Routes>
-      
     </div>
   );
 };

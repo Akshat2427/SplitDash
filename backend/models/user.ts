@@ -11,7 +11,9 @@ const userSchemaZod = z.object({
     phone: z.number().optional(), // Allows undefined
     password: z.string(),
     partner: z.array(z.string()).optional(),
-    expenseID: z.string().optional()
+    expenseID: z.string().optional(),
+    address: z.string().optional(), // New field
+    income: z.number().optional() // New field
 });
 
 // Define the inferred type from the zod schema
@@ -27,6 +29,8 @@ interface IUser extends Document {
     partner?: string[];
     salt?: string;
     expenseID: string;
+    address?: string; // New field
+    income?: number; // New field
 }
 
 interface IUserModel extends Model<IUser> {
@@ -42,7 +46,9 @@ const userSchema = new mongoose.Schema<IUser>(
         password: { type: String, required: true, minlength: 8 },
         partner: { type: [String], default: [] },
         salt: { type: String },
-        expenseID: { type: String, required: true }
+        expenseID: { type: String, required: true },
+        address: { type: String, default: "" }, // New field
+        income: { type: Number, default: 0 } // New field
     },
     { timestamps: true }
 );
@@ -52,7 +58,6 @@ userSchema.pre<IUser>('save', function (next) {
     if (!this.isModified("password")) return next(); // Only hash if password is modified
 
     // Generate salt and hash the password
-    console.log('this.passowrd===================================' , this.password);
     const salt = randomBytes(16).toString('hex');
     const hashPassword = createHmac("sha256", salt)
         .update(this.password)
@@ -60,10 +65,6 @@ userSchema.pre<IUser>('save', function (next) {
 
     this.salt = salt;
     this.password = hashPassword; // Set the hashed password
-    console.log('=Pre-save hook called===================================');
-    console.log('Salt:', salt);
-    console.log('Hashed password:', hashPassword);
-    console.log('====================================');
     next();
 });
 
@@ -80,16 +81,9 @@ userSchema.statics.matchPassword = async function (email: string, password: stri
         }
 
         // Hash the input password with the stored salt
-        console.log('=Password match attempt===================================' , user.password);
-        
         const userHash = createHmac("sha256", user.salt)
             .update(password)
             .digest("hex");
-
-        console.log('=Password match attempt===================================');
-        console.log('Input password hash:', userHash);
-        console.log('Stored password hash:', user.password);
-        console.log('====================================');
 
         if (userHash !== user.password) {
             throw new Error('Incorrect password!');
